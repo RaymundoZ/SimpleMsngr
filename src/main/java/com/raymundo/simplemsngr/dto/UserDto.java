@@ -1,13 +1,16 @@
-package com.raymundo.simplemsngr.dto.request;
+package com.raymundo.simplemsngr.dto;
 
-import com.raymundo.simplemsngr.entity.UserEntity;
-import com.raymundo.simplemsngr.util.BaseDto;
-import com.raymundo.simplemsngr.util.ConvertableToEntity;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.raymundo.simplemsngr.validation.UsernameUnique;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 
-public record UserRequest(
+import java.util.UUID;
+
+public record UserDto(
+
+        @JsonProperty(value = "id", access = JsonProperty.Access.READ_ONLY)
+        UUID id,
 
         @NotEmpty(message = "The 'name' attribute should not be null")
         String name,
@@ -24,18 +27,12 @@ public record UserRequest(
         String username,
 
         @NotEmpty(message = "The 'password' attribute should not be null")
-        String password
+        @JsonProperty(value = "password", access = JsonProperty.Access.WRITE_ONLY)
+        String password,
 
-) implements BaseDto, ConvertableToEntity<UserEntity> {
+        @JsonProperty(value = "token", access = JsonProperty.Access.READ_ONLY)
+        String token
 
-    @Override
-    public UserEntity toEntity() {
-        UserEntity user = new UserEntity();
-        user.setName(name);
-        user.setSurname(surname);
-        user.setEmail(email);
-        user.setUsername(username);
-        user.setPassword(password);
-        return user;
-    }
+) {
+
 }

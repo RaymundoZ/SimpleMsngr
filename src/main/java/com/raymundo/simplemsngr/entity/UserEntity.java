@@ -1,6 +1,5 @@
 package com.raymundo.simplemsngr.entity;
 
-import com.raymundo.simplemsngr.util.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,7 +12,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "_user")
 @Data
-public class UserEntity implements BaseEntity, UserDetails {
+public class UserEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -34,6 +33,9 @@ public class UserEntity implements BaseEntity, UserDetails {
 
     @Column(name = "password")
     private String password;
+
+    @Transient
+    private String token;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
