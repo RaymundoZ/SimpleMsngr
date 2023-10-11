@@ -15,10 +15,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
+
+    private static final List<String> WHITELIST = List.of(
+            "/auth/sign_up",
+            "/user/verify_email"
+    );
 
     private final JwtService jwtService;
     private final SecurityContextHolderStrategy holderStrategy;
@@ -26,7 +32,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (request.getServletPath().equals("/auth/sign_up")) {
+        if (WHITELIST.stream().anyMatch(s -> request.getServletPath().startsWith(s))) {
             filterChain.doFilter(request, response);
             return;
         }

@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -23,16 +22,12 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String generateToken(String username, String password) {
-        Map<String, String> claims = new HashMap<>();
-        claims.put("username", username);
-        claims.put("password", password);
+        return generateToken(Map.of("username", username, "password", password));
+    }
 
-        return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(new Date())
-                .setExpiration(null)
-                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
-                .compact();
+    @Override
+    public String generateToken(String email) {
+        return generateToken(Map.of("email", email));
     }
 
     @Override
@@ -44,12 +39,29 @@ public class JwtServiceImpl implements JwtService {
         return authToken;
     }
 
+    @Override
+    public String getEmailFromToken(String token) {
+        return getClaims(token).get("email", String.class);
+    }
+
     private String getUsername(String token) {
         return getClaims(token).get("username", String.class);
     }
 
     private String getPassword(String token) {
         return getClaims(token).get("password", String.class);
+    }
+
+    private String generateToken(Map<String, String> claims) {
+        Date issuedAt = new Date();
+        Date expiration = new Date(issuedAt.getTime() + 3_600_000);
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(issuedAt)
+                .setExpiration(expiration)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
+                .compact();
     }
 
     private Claims getClaims(String token) {

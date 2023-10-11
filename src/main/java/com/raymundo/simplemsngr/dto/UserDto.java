@@ -1,6 +1,9 @@
 package com.raymundo.simplemsngr.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.raymundo.simplemsngr.util.EmailStatus;
+import com.raymundo.simplemsngr.validation.EmailUnique;
 import com.raymundo.simplemsngr.validation.UsernameUnique;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -20,6 +23,7 @@ public record UserDto(
 
         @NotEmpty(message = "The 'email' attribute should not be null")
         @Email(message = "The 'email' attribute should be valid")
+        @EmailUnique(message = "This email is already in use")
         String email,
 
         @NotEmpty(message = "The 'username' attribute should not be null")
@@ -31,7 +35,11 @@ public record UserDto(
         String password,
 
         @JsonProperty(value = "token", access = JsonProperty.Access.READ_ONLY)
-        String token
+        String token,
+
+        @JsonProperty(value = "email_status")
+        @JsonFormat(shape = JsonFormat.Shape.STRING)
+        EmailStatus emailStatus
 
 ) {
 

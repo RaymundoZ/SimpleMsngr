@@ -1,6 +1,7 @@
 package com.raymundo.simplemsngr.util;
 
 import com.raymundo.simplemsngr.dto.basic.ErrorDto;
+import com.raymundo.simplemsngr.exception.EmailVerificationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -12,8 +13,15 @@ import java.time.LocalTime;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(value = Exception.class)
     public ResponseEntity<ErrorDto> handleException(Exception e) {
+        ErrorDto errorDto = new ErrorDto(HttpStatus.BAD_REQUEST.value(),
+                e.getClass().getSimpleName(), e.getMessage(), LocalTime.now());
+        return ResponseEntity.badRequest().body(errorDto);
+    }
+
+    @ExceptionHandler(value = EmailVerificationException.class)
+    public ResponseEntity<ErrorDto> handleEmailVerificationException(EmailVerificationException e) {
         ErrorDto errorDto = new ErrorDto(HttpStatus.BAD_REQUEST.value(),
                 e.getClass().getSimpleName(), e.getMessage(), LocalTime.now());
         return ResponseEntity.badRequest().body(errorDto);

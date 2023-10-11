@@ -1,5 +1,6 @@
 package com.raymundo.simplemsngr.entity;
 
+import com.raymundo.simplemsngr.util.EmailStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -33,6 +34,10 @@ public class UserEntity implements UserDetails {
 
     @Column(name = "password")
     private String password;
+
+    @Column(name = "email_status")
+    @Enumerated(value = EnumType.STRING)
+    private EmailStatus emailStatus;
 
     @Transient
     private String token;

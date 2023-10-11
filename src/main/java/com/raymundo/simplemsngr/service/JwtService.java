@@ -7,5 +7,9 @@ public interface JwtService {
 
     String generateToken(String username, String password);
 
+    String generateToken(String email);
+
     UsernamePasswordAuthenticationToken getAuthenticationToken(String token, HttpServletRequest request);
+
+    String getEmailFromToken(String token);
 }
