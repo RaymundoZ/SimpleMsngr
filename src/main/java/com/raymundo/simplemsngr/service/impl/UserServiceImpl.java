@@ -1,8 +1,10 @@
 package com.raymundo.simplemsngr.service.impl;
 
 import com.raymundo.simplemsngr.dto.UserDto;
+import com.raymundo.simplemsngr.entity.JwtTokenEntity;
 import com.raymundo.simplemsngr.entity.UserEntity;
 import com.raymundo.simplemsngr.exception.EmailVerificationException;
+import com.raymundo.simplemsngr.exception.InvalidTokenException;
 import com.raymundo.simplemsngr.mapper.UserMapper;
 import com.raymundo.simplemsngr.repository.UserRepository;
 import com.raymundo.simplemsngr.service.EmailService;
@@ -12,6 +14,8 @@ import com.raymundo.simplemsngr.util.EmailStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -26,22 +30,32 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto create(UserDto userDto) {
         UserEntity user = userMapper.toEntity(userDto);
+
+        JwtTokenEntity jwtToken = new JwtTokenEntity();
+        jwtToken.setUsername(user.getUsername());
+        jwtToken.setPassword(user.getPassword());
+        jwtToken.setEmail(user.getEmail());
+        jwtToken.setExpiration(LocalDateTime.now().plusHours(1));
+        jwtToken.setIsValid(true);
+
         user.setPassword(passwordEncoder.encode(userDto.password()));
-        user.setToken(jwtService.generateToken(userDto.username(), userDto.password()));
+        user.setToken(jwtService.generateToken(jwtToken));
         user.setEmailStatus(EmailStatus.UNVERIFIED);
-        emailService.sendAuthVerificationEmail(user);
+        emailService.sendAuthVerificationEmail(userDto);
         return userMapper.toDto(userRepository.save(user));
     }
 
     @Override
-    public String verifyEmail(String token) throws EmailVerificationException {
-        String email = jwtService.getEmailFromToken(token);
+    public String verifyEmail(String token) throws EmailVerificationException, InvalidTokenException {
+        if (!jwtService.isTokenValid(token))
+            throw new InvalidTokenException("Invalid token");
+
+        String email = jwtService.parseToken(token).getEmail();
         UserEntity user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EmailVerificationException("Incorrect verification link"));
-        if (user.getEmailStatus().equals(EmailStatus.UNVERIFIED)) {
-            user.setEmailStatus(EmailStatus.VERIFIED);
-            userRepository.save(user);
-        }
+        user.setEmailStatus(EmailStatus.VERIFIED);
+        userRepository.save(user);
+        jwtService.invalidateToken(token);
         return email;
     }
 }

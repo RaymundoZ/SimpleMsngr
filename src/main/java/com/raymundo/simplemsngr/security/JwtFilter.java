@@ -1,5 +1,6 @@
 package com.raymundo.simplemsngr.security;
 
+import com.raymundo.simplemsngr.entity.JwtTokenEntity;
 import com.raymundo.simplemsngr.service.JwtService;
 import jakarta.annotation.Nullable;
 import jakarta.servlet.FilterChain;
@@ -7,10 +8,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -30,6 +34,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private final SecurityContextHolderStrategy holderStrategy;
     private final AuthenticationManager authManager;
 
+    @SneakyThrows
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if (WHITELIST.stream().anyMatch(s -> request.getServletPath().startsWith(s))) {
@@ -38,9 +43,14 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         String token = getJwtToken(request);
-        if (token != null) {
+        if (token != null && jwtService.isTokenValid(token)) {
+            JwtTokenEntity jwtToken = jwtService.parseToken(token);
+            UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(jwtToken.getUsername(), jwtToken.getPassword());
+            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
             Authentication authentication = authManager
-                    .authenticate(jwtService.getAuthenticationToken(token, request));
+                    .authenticate(authToken);
             SecurityContext securityContext = holderStrategy.createEmptyContext();
             securityContext.setAuthentication(authentication);
             holderStrategy.setContext(securityContext);

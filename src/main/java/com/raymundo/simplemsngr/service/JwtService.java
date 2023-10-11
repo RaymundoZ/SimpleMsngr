@@ -1,15 +1,15 @@
 package com.raymundo.simplemsngr.service;
 
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import com.raymundo.simplemsngr.entity.JwtTokenEntity;
+import com.raymundo.simplemsngr.exception.InvalidTokenException;
 
 public interface JwtService {
 
-    String generateToken(String username, String password);
+    String generateToken(JwtTokenEntity jwtToken);
 
-    String generateToken(String email);
+    void invalidateToken(String token) throws InvalidTokenException;
 
-    UsernamePasswordAuthenticationToken getAuthenticationToken(String token, HttpServletRequest request);
+    boolean isTokenValid(String token) throws InvalidTokenException;
 
-    String getEmailFromToken(String token);
+    JwtTokenEntity parseToken(String token) throws InvalidTokenException;
 }

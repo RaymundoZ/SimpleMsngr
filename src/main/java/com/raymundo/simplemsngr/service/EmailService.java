@@ -1,8 +1,8 @@
 package com.raymundo.simplemsngr.service;
 
-import com.raymundo.simplemsngr.entity.UserEntity;
+import com.raymundo.simplemsngr.dto.UserDto;
 
 public interface EmailService {
 
-    void sendAuthVerificationEmail(UserEntity user);
+    void sendAuthVerificationEmail(UserDto user);
 }

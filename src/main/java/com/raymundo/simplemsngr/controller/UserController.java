@@ -2,6 +2,7 @@ package com.raymundo.simplemsngr.controller;
 
 import com.raymundo.simplemsngr.dto.basic.SuccessDto;
 import com.raymundo.simplemsngr.exception.EmailVerificationException;
+import com.raymundo.simplemsngr.exception.InvalidTokenException;
 import com.raymundo.simplemsngr.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping(value = "/verify_email/{token}")
-    public ResponseEntity<SuccessDto<String>> verifyEmail(@PathVariable String token) throws EmailVerificationException {
+    public ResponseEntity<SuccessDto<String>> verifyEmail(@PathVariable String token) throws EmailVerificationException, InvalidTokenException {
         return new ResponseEntity<>(
                 new SuccessDto<>(HttpStatus.OK.value(),
                         "Email was successfully verified",
