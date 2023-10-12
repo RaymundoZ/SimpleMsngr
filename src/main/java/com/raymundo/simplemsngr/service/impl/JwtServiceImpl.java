@@ -10,9 +10,11 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.Map;
@@ -22,7 +24,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class JwtServiceImpl implements JwtService {
 
-    private static final String SECRET_KEY = "944641253C8054206AA5D54603C969E44F995AADEEC04ADEEB1EA1713A05B817FB6C0D4F5C4F760756F26EB42762D74E99637FF4D8A2F727A1FE3711030457E6";
+    @Value(value = "${jwt.secret-key}")
+    private String SECRET_KEY;
 
     private final JwtTokenRepository jwtTokenRepository;
 
@@ -31,11 +34,13 @@ public class JwtServiceImpl implements JwtService {
         UUID tokenId = jwtTokenRepository.save(jwtToken).getId();
 
         Map<String, String> claims = Map.of("id", tokenId.toString());
+        LocalDateTime localDateTime = jwtToken.getExpiration();
+        Date expiration = localDateTime == null ? null : Date.from(localDateTime.toInstant(ZoneOffset.UTC));
 
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date())
-                .setExpiration(Date.from(jwtToken.getExpiration().toInstant(ZoneOffset.UTC)))
+                .setExpiration(expiration)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
@@ -43,14 +48,12 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public void invalidateToken(String token) throws InvalidTokenException {
         JwtTokenEntity jwtToken = parseToken(token);
-        jwtToken.setIsValid(false);
-        jwtTokenRepository.save(jwtToken);
+        jwtTokenRepository.delete(jwtToken);
     }
 
     @Override
-    public boolean isTokenValid(String token) throws InvalidTokenException {
-        JwtTokenEntity jwtToken = parseToken(token);
-        return jwtToken.getIsValid();
+    public void invalidateTokensByUsername(String username) {
+        jwtTokenRepository.deleteAllByUsernameAndExpirationIsNull(username);
     }
 
     @Override

@@ -9,7 +9,7 @@ public interface JwtService {
 
     void invalidateToken(String token) throws InvalidTokenException;
 
-    boolean isTokenValid(String token) throws InvalidTokenException;
+    void invalidateTokensByUsername(String username);
 
     JwtTokenEntity parseToken(String token) throws InvalidTokenException;
 }

@@ -21,7 +21,11 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/auth/sign_up", "/user/verify_email/*").permitAll();
+                    auth.requestMatchers("/auth/sign_up",
+                                    "/user/verify_email/*",
+                                    "/auth/login")
+                            .permitAll();
+                    auth.requestMatchers("/auth/logout").authenticated();
                 })
                 .build();
     }

@@ -15,8 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -32,11 +30,10 @@ public class UserServiceImpl implements UserService {
         UserEntity user = userMapper.toEntity(userDto);
 
         JwtTokenEntity jwtToken = new JwtTokenEntity();
-        jwtToken.setUsername(user.getUsername());
-        jwtToken.setPassword(user.getPassword());
-        jwtToken.setEmail(user.getEmail());
-        jwtToken.setExpiration(LocalDateTime.now().plusHours(1));
-        jwtToken.setIsValid(true);
+        jwtToken.setUsername(userDto.username());
+        jwtToken.setPassword(userDto.password());
+        jwtToken.setEmail(userDto.email());
+        jwtToken.setExpiration(null);
 
         user.setPassword(passwordEncoder.encode(userDto.password()));
         user.setToken(jwtService.generateToken(jwtToken));
@@ -47,9 +44,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String verifyEmail(String token) throws EmailVerificationException, InvalidTokenException {
-        if (!jwtService.isTokenValid(token))
-            throw new InvalidTokenException("Invalid token");
-
         String email = jwtService.parseToken(token).getEmail();
         UserEntity user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EmailVerificationException("Incorrect verification link"));

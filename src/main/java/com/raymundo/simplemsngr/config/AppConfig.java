@@ -13,6 +13,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 
 @Configuration
 public class AppConfig {
@@ -46,5 +48,15 @@ public class AppConfig {
     @Bean
     public AuthenticationManager authenticationManager(UserRepository userRepository) {
         return new ProviderManager(authenticationProvider(userRepository));
+    }
+
+    @Bean
+    public SecurityContextLogoutHandler securityContextLogoutHandler() {
+        return new SecurityContextLogoutHandler();
+    }
+
+    @Bean
+    public WebAuthenticationDetailsSource webAuthenticationDetailsSource() {
+        return new WebAuthenticationDetailsSource();
     }
 }

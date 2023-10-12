@@ -29,9 +29,6 @@ public class JwtTokenEntity {
     @Temporal(value = TemporalType.TIMESTAMP)
     private LocalDateTime expiration;
 
-    @Column(name = "is_valid")
-    private Boolean isValid;
-
     @Transient
     private Boolean isExpired;
 

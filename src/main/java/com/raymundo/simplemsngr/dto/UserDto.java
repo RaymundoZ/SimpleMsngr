@@ -1,6 +1,7 @@
 package com.raymundo.simplemsngr.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.raymundo.simplemsngr.util.EmailStatus;
 import com.raymundo.simplemsngr.validation.EmailUnique;
@@ -34,7 +35,7 @@ public record UserDto(
         @JsonProperty(value = "password", access = JsonProperty.Access.WRITE_ONLY)
         String password,
 
-        @JsonProperty(value = "token", access = JsonProperty.Access.READ_ONLY)
+        @JsonIgnore
         String token,
 
         @JsonProperty(value = "email_status")

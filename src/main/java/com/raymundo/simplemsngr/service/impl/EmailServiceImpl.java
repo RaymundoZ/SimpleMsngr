@@ -38,7 +38,6 @@ public class EmailServiceImpl implements EmailService {
         jwtToken.setPassword(user.password());
         jwtToken.setEmail(user.email());
         jwtToken.setExpiration(LocalDateTime.now().plusHours(1));
-        jwtToken.setIsValid(true);
 
         SimpleMailMessage message = new SimpleMailMessage();
         String token = jwtService.generateToken(jwtToken);
