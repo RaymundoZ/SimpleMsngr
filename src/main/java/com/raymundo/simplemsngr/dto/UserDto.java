@@ -38,7 +38,10 @@ public record UserDto(
         @JsonIgnore
         String token,
 
-        @JsonProperty(value = "email_status")
+        @JsonIgnore
+        Boolean isEnabled,
+
+        @JsonProperty(value = "email_status", access = JsonProperty.Access.READ_ONLY)
         @JsonFormat(shape = JsonFormat.Shape.STRING)
         EmailStatus emailStatus
 

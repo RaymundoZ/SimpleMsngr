@@ -1,13 +1,14 @@
 package com.raymundo.simplemsngr.service.impl;
 
-import com.raymundo.simplemsngr.dto.UserDto;
 import com.raymundo.simplemsngr.entity.JwtTokenEntity;
+import com.raymundo.simplemsngr.entity.UserEntity;
 import com.raymundo.simplemsngr.service.EmailService;
 import com.raymundo.simplemsngr.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -16,8 +17,12 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
 
-    private static final String SUBJECT = "Email verification";
-    private static final String TEXT = "The '%s' user with '%s' email just created an account.\nTo confirm click the link: http%s://%s:%s/user/verify_email/%s\nThe link will be available for 1 hour.";
+    private static final String VERIFICATION_SUBJECT = "Email verification";
+    private static final String VERIFICATION_TEXT = "The '%s' user with '%s' email just created an account.\nTo confirm click the link: http%s://%s:%s/user/verify_email/%s\nThe link will be available for 1 hour.";
+
+    private static final String ACCOUNT_DISABLE_SUBJECT = "Your account is about to be deleted";
+
+    private static final String ACCOUNT_DISABLE_TEXT = "The '%s' user with '%s' email just requested for account deleting.\nIf you want to restore your account click the link: http%s://%s:%s/user/enable/%s\nThe link will be available for 1 month.";
 
     @Value(value = "${email-service.domain}")
     private String domain;
@@ -30,21 +35,41 @@ public class EmailServiceImpl implements EmailService {
 
     private final JavaMailSender mailSender;
     private final JwtService jwtService;
+    private final SecurityContextHolderStrategy holderStrategy;
 
     @Override
-    public void sendAuthVerificationEmail(UserDto user) {
-        JwtTokenEntity jwtToken = new JwtTokenEntity();
-        jwtToken.setUsername(user.username());
-        jwtToken.setPassword(user.password());
-        jwtToken.setEmail(user.email());
-        jwtToken.setExpiration(LocalDateTime.now().plusHours(1));
-
-        SimpleMailMessage message = new SimpleMailMessage();
+    public void sendAuthVerificationEmail() {
+        UserEntity user = (UserEntity) holderStrategy.getContext().getAuthentication().getPrincipal();
+        JwtTokenEntity jwtToken = getJwtToken(user, LocalDateTime.now().plusHours(1));
         String token = jwtService.generateToken(jwtToken);
-        message.setTo(user.email());
-        message.setSubject(SUBJECT);
-        message.setText(String.format(TEXT, user.username(), user.email(),
-                useHttps ? "s" : "", domain, port, token));
+        SimpleMailMessage message = getMailMessage(user, token, VERIFICATION_SUBJECT, VERIFICATION_TEXT);
         mailSender.send(message);
+    }
+
+    @Override
+    public void sendAccountDisableEmail() {
+        UserEntity user = (UserEntity) holderStrategy.getContext().getAuthentication().getPrincipal();
+        JwtTokenEntity jwtToken = getJwtToken(user, LocalDateTime.now().plusMonths(1));
+        String token = jwtService.generateToken(jwtToken);
+        SimpleMailMessage message = getMailMessage(user, token, ACCOUNT_DISABLE_SUBJECT, ACCOUNT_DISABLE_TEXT);
+        mailSender.send(message);
+    }
+
+    private JwtTokenEntity getJwtToken(UserEntity user, LocalDateTime expiration) {
+        JwtTokenEntity jwtToken = new JwtTokenEntity();
+        jwtToken.setUsername(user.getUsername());
+        jwtToken.setPassword(user.getPassword());
+        jwtToken.setEmail(user.getEmail());
+        jwtToken.setExpiration(expiration);
+        return jwtToken;
+    }
+
+    private SimpleMailMessage getMailMessage(UserEntity user, String token, String subject, String text) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(user.getEmail());
+        message.setSubject(subject);
+        message.setText(String.format(text, user.getUsername(), user.getEmail(),
+                useHttps ? "s" : "", domain, port, token));
+        return message;
     }
 }

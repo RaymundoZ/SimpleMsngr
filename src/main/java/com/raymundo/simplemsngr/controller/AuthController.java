@@ -3,7 +3,6 @@ package com.raymundo.simplemsngr.controller;
 import com.raymundo.simplemsngr.dto.UserDto;
 import com.raymundo.simplemsngr.dto.UserLoginDto;
 import com.raymundo.simplemsngr.dto.basic.SuccessDto;
-import com.raymundo.simplemsngr.exception.InvalidTokenException;
 import com.raymundo.simplemsngr.exception.ValidationException;
 import com.raymundo.simplemsngr.service.AuthService;
 import com.raymundo.simplemsngr.service.UserService;
@@ -33,7 +32,7 @@ public class AuthController {
         if (bindingResult.hasErrors())
             throw new ValidationException(GlobalExceptionHandler.handleValidationResults(bindingResult));
 
-        UserDto user = userService.create(userDto);
+        UserDto user = userService.createUser(userDto);
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.AUTHORIZATION, user.token());
 
@@ -47,7 +46,7 @@ public class AuthController {
     }
 
     @PostMapping(value = "/logout")
-    public ResponseEntity<SuccessDto<String>> logout(HttpServletRequest request) throws InvalidTokenException {
+    public ResponseEntity<SuccessDto<String>> logout(HttpServletRequest request) {
         return new ResponseEntity<>(
                 new SuccessDto<>(
                         HttpStatus.OK.value(),

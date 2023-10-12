@@ -23,9 +23,15 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/auth/sign_up",
                                     "/user/verify_email/*",
+                                    "/user/enable/*",
                                     "/auth/login")
                             .permitAll();
-                    auth.requestMatchers("/auth/logout").authenticated();
+                    auth.requestMatchers("/auth/logout",
+                                    "/user/send_email",
+                                    "/user/edit",
+                                    "/user/edit_creds",
+                                    "/user/disable")
+                            .authenticated();
                 })
                 .build();
     }

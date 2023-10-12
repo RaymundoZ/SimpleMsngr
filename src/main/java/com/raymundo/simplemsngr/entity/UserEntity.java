@@ -39,6 +39,9 @@ public class UserEntity implements UserDetails {
     @Enumerated(value = EnumType.STRING)
     private EmailStatus emailStatus;
 
+    @Column(name = "is_enabled")
+    private Boolean isEnabled;
+
     @Transient
     private String token;
 
@@ -74,6 +77,6 @@ public class UserEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return isEnabled;
     }
 }
