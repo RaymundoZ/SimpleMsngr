@@ -42,6 +42,9 @@ public class UserEntity implements UserDetails {
     @Column(name = "is_enabled")
     private Boolean isEnabled;
 
+    @Column(name = "friends_visible")
+    private Boolean friendsVisible;
+
     @Transient
     private String token;
 

@@ -38,8 +38,8 @@ public record UserDto(
         @JsonIgnore
         String token,
 
-        @JsonIgnore
-        Boolean isEnabled,
+        @JsonProperty(value = "friends_visible", access = JsonProperty.Access.READ_ONLY)
+        Boolean friendsVisible,
 
         @JsonProperty(value = "email_status", access = JsonProperty.Access.READ_ONLY)
         @JsonFormat(shape = JsonFormat.Shape.STRING)

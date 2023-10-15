@@ -38,6 +38,7 @@ public class UserServiceImpl implements UserService {
     public UserDto createUser(UserDto userDto) {
         UserEntity user = userMapper.toEntity(userDto);
         user.setIsEnabled(true);
+        user.setFriendsVisible(true);
 
         JwtTokenEntity jwtToken = new JwtTokenEntity();
         jwtToken.setUsername(userDto.username());

@@ -31,7 +31,13 @@ public class SecurityConfig {
                                     "/user/edit",
                                     "/user/edit_creds",
                                     "/user/disable",
-                                    "/chat/*")
+                                    "/chat/*",
+                                    "/user/add_friend/*",
+                                    "/user/get_friends",
+                                    "/user/get_friends/*",
+                                    "/user/hide_friends",
+                                    "/user/open_friends",
+                                    "/user/remove_friend/*")
                             .authenticated();
                 })
                 .build();
