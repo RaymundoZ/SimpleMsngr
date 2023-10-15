@@ -30,7 +30,8 @@ public class SecurityConfig {
                                     "/user/send_email",
                                     "/user/edit",
                                     "/user/edit_creds",
-                                    "/user/disable")
+                                    "/user/disable",
+                                    "/chat/*")
                             .authenticated();
                 })
                 .build();
