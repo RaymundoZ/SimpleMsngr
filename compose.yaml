@@ -12,3 +12,11 @@ services:
       - ./docker_db:/var/lib/postgresql/data
     ports:
       - '5434:5432'
+
+  app:
+    container_name: simplemsngr
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
