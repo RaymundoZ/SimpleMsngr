@@ -16,7 +16,11 @@ public class SecurityConfig {
             "/auth/sign_up",
             "/user/verify_email/*",
             "/user/enable/*",
-            "/auth/login"
+            "/auth/login",
+            "/swagger-ui/index.html",
+            "/swagger-ui/*",
+            "/v3/api-docs",
+            "/v3/api-docs/*"
     };
 
     private static final String[] AUTHENTICATED_ENDPOINTS = {

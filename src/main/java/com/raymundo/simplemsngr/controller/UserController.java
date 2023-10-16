@@ -10,6 +10,10 @@ import com.raymundo.simplemsngr.util.exception.AccountActivationException;
 import com.raymundo.simplemsngr.util.exception.EmailVerificationException;
 import com.raymundo.simplemsngr.util.exception.InvalidTokenException;
 import com.raymundo.simplemsngr.util.exception.ValidationException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "UserController", description = "Responsible for operations connected with user and his profile")
 @RestController
 @RequestMapping(value = "/user")
 @RequiredArgsConstructor
@@ -26,8 +31,11 @@ public class UserController {
 
     private final UserService userService;
 
+    @Operation(summary = "Verifies user's email")
     @GetMapping(value = "/verify_email/{token}")
-    public ResponseEntity<SuccessDto<String>> verifyEmail(@PathVariable String token) throws EmailVerificationException, InvalidTokenException {
+    public ResponseEntity<SuccessDto<String>> verifyEmail(@PathVariable
+                                                          @Parameter(description = "One-use jwt token to verify email")
+                                                          String token) throws EmailVerificationException, InvalidTokenException {
         return new ResponseEntity<>(
                 new SuccessDto<>(HttpStatus.OK.value(),
                         "Email was successfully verified",
@@ -35,6 +43,8 @@ public class UserController {
         );
     }
 
+    @SecurityRequirement(name = "JWT")
+    @Operation(summary = "Sends verification email for current user")
     @PostMapping(value = "/send_email")
     public ResponseEntity<SuccessDto<String>> sendVerificationEmail() throws EmailVerificationException {
         return new ResponseEntity<>(
@@ -46,6 +56,8 @@ public class UserController {
         );
     }
 
+    @SecurityRequirement(name = "JWT")
+    @Operation(summary = "Edits current user's profile info")
     @PutMapping(value = "/edit")
     public ResponseEntity<SuccessDto<UserDto>> editUser(@Valid @RequestBody UserEditDto userEditDto, BindingResult bindingResult) throws ValidationException, EmailVerificationException {
         if (bindingResult.hasErrors())
@@ -60,6 +72,8 @@ public class UserController {
         );
     }
 
+    @SecurityRequirement(name = "JWT")
+    @Operation(summary = "Edits current user's credentials")
     @PutMapping(value = "/edit_creds")
     public ResponseEntity<SuccessDto<UserDto>> editCreds(@Valid @RequestBody UserCredentialsDto credentialsDto, BindingResult bindingResult) throws ValidationException {
         if (bindingResult.hasErrors())
@@ -78,6 +92,8 @@ public class UserController {
         );
     }
 
+    @SecurityRequirement(name = "JWT")
+    @Operation(summary = "Disables current user's account")
     @PostMapping(value = "/disable")
     public ResponseEntity<SuccessDto<String>> disableAccount(HttpServletRequest request) {
         return new ResponseEntity<>(
@@ -89,8 +105,11 @@ public class UserController {
         );
     }
 
+    @Operation(summary = "Enables current user's account")
     @GetMapping(value = "/enable/{token}")
-    public ResponseEntity<SuccessDto<String>> enableAccount(@PathVariable String token) throws InvalidTokenException, AccountActivationException {
+    public ResponseEntity<SuccessDto<String>> enableAccount(@PathVariable
+                                                            @Parameter(description = "One-use jwt token to enable account")
+                                                            String token) throws InvalidTokenException, AccountActivationException {
         return new ResponseEntity<>(
                 new SuccessDto<>(
                         HttpStatus.OK.value(),

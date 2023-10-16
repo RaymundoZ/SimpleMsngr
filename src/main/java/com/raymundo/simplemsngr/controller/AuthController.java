@@ -7,6 +7,9 @@ import com.raymundo.simplemsngr.service.AuthService;
 import com.raymundo.simplemsngr.service.UserService;
 import com.raymundo.simplemsngr.util.GlobalExceptionHandler;
 import com.raymundo.simplemsngr.util.exception.ValidationException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "AuthController", description = "Responsible for security operations")
 @RestController
 @RequestMapping(value = "/auth")
 @RequiredArgsConstructor
@@ -27,6 +31,7 @@ public class AuthController {
     private final UserService userService;
     private final AuthService authService;
 
+    @Operation(summary = "Registers a new user")
     @PostMapping(value = "/sign_up")
     public ResponseEntity<SuccessDto<UserDto>> signUp(@Valid @RequestBody UserDto userDto, BindingResult bindingResult) throws ValidationException {
         if (bindingResult.hasErrors())
@@ -45,6 +50,8 @@ public class AuthController {
         );
     }
 
+    @SecurityRequirement(name = "JWT")
+    @Operation(summary = "Invalidates user's jwt tokens")
     @PostMapping(value = "/logout")
     public ResponseEntity<SuccessDto<String>> logout(HttpServletRequest request) {
         return new ResponseEntity<>(
@@ -56,6 +63,7 @@ public class AuthController {
         );
     }
 
+    @Operation(summary = "Returns a new jwt token")
     @PostMapping(value = "/login")
     public ResponseEntity<SuccessDto<UserDto>> login(@Valid @RequestBody UserLoginDto userLoginDto, BindingResult bindingResult, HttpServletRequest request) throws ValidationException {
         if (bindingResult.hasErrors())

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.raymundo.simplemsngr.util.EmailStatus;
 import com.raymundo.simplemsngr.util.validation.EmailUnique;
 import com.raymundo.simplemsngr.util.validation.UsernameUnique;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 
@@ -30,6 +31,7 @@ public record UserDto(
         @JsonProperty(value = "password", access = JsonProperty.Access.WRITE_ONLY)
         String password,
 
+        @Schema(hidden = true)
         @JsonIgnore
         String token,
 
