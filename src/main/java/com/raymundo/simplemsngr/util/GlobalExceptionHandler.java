@@ -22,8 +22,8 @@ public class GlobalExceptionHandler {
     public static String handleValidationResults(BindingResult validationResult) {
         StringBuilder message = new StringBuilder("Validation errors:");
         validationResult.getFieldErrors().forEach(error ->
-                message.append(" \n").append(error.getField()).append(": ")
-                        .append(error.getDefaultMessage()));
+                message.append(" ").append(error.getDefaultMessage())
+                        .append(";"));
         return message.toString();
     }
 }

@@ -1,6 +1,6 @@
 package com.raymundo.simplemsngr.dto;
 
-import com.raymundo.simplemsngr.validation.EmailUnique;
+import com.raymundo.simplemsngr.util.validation.EmailUnique;
 
 public record UserEditDto(
 

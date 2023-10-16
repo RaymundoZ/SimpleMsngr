@@ -1,6 +1,6 @@
 package com.raymundo.simplemsngr.dto;
 
-import com.raymundo.simplemsngr.validation.UsernameUnique;
+import com.raymundo.simplemsngr.util.validation.UsernameUnique;
 import jakarta.validation.constraints.NotBlank;
 
 public record UserCredentialsDto(

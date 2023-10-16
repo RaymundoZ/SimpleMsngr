@@ -12,6 +12,28 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
 
+    private static final String[] PERMIT_ALL_ENDPOINTS = {
+            "/auth/sign_up",
+            "/user/verify_email/*",
+            "/user/enable/*",
+            "/auth/login"
+    };
+
+    private static final String[] AUTHENTICATED_ENDPOINTS = {
+            "/auth/logout",
+            "/user/send_email",
+            "/user/edit",
+            "/user/edit_creds",
+            "/user/disable",
+            "/chat/*",
+            "/friends/add/*",
+            "/friends/get",
+            "/friends/get/*",
+            "/friends/hide",
+            "/friends/open",
+            "/friends/remove/*"
+    };
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtFilter jwtFilter) throws Exception {
         return httpSecurity
@@ -21,24 +43,9 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/auth/sign_up",
-                                    "/user/verify_email/*",
-                                    "/user/enable/*",
-                                    "/auth/login")
-                            .permitAll();
-                    auth.requestMatchers("/auth/logout",
-                                    "/user/send_email",
-                                    "/user/edit",
-                                    "/user/edit_creds",
-                                    "/user/disable",
-                                    "/chat/*",
-                                    "/user/add_friend/*",
-                                    "/user/get_friends",
-                                    "/user/get_friends/*",
-                                    "/user/hide_friends",
-                                    "/user/open_friends",
-                                    "/user/remove_friend/*")
-                            .authenticated();
+                    auth.requestMatchers(PERMIT_ALL_ENDPOINTS).permitAll();
+                    auth.requestMatchers(AUTHENTICATED_ENDPOINTS).authenticated();
+                    auth.anyRequest().denyAll();
                 })
                 .build();
     }

@@ -1,7 +1,7 @@
 package com.raymundo.simplemsngr.service;
 
 import com.raymundo.simplemsngr.entity.JwtTokenEntity;
-import com.raymundo.simplemsngr.exception.InvalidTokenException;
+import com.raymundo.simplemsngr.util.exception.InvalidTokenException;
 
 public interface JwtService {
 

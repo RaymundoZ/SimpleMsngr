@@ -1,4 +1,4 @@
-package com.raymundo.simplemsngr.exception;
+package com.raymundo.simplemsngr.util.exception;
 
 public class EmailVerificationException extends Exception {
 

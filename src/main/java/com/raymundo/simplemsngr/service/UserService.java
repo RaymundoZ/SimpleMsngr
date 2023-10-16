@@ -3,9 +3,9 @@ package com.raymundo.simplemsngr.service;
 import com.raymundo.simplemsngr.dto.UserCredentialsDto;
 import com.raymundo.simplemsngr.dto.UserDto;
 import com.raymundo.simplemsngr.dto.UserEditDto;
-import com.raymundo.simplemsngr.exception.AccountActivationException;
-import com.raymundo.simplemsngr.exception.EmailVerificationException;
-import com.raymundo.simplemsngr.exception.InvalidTokenException;
+import com.raymundo.simplemsngr.util.exception.AccountActivationException;
+import com.raymundo.simplemsngr.util.exception.EmailVerificationException;
+import com.raymundo.simplemsngr.util.exception.InvalidTokenException;
 import jakarta.servlet.http.HttpServletRequest;
 
 public interface UserService {
@@ -14,9 +14,9 @@ public interface UserService {
 
     String verifyEmail(String token) throws EmailVerificationException, InvalidTokenException;
 
-    String sendVerificationEmail();
+    String sendVerificationEmail() throws EmailVerificationException;
 
-    UserDto editUser(UserEditDto userEditDto);
+    UserDto editUser(UserEditDto userEditDto) throws EmailVerificationException;
 
     UserDto editCreds(UserCredentialsDto userCredentialsDto);
 

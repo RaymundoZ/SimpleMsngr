@@ -5,9 +5,6 @@ import com.raymundo.simplemsngr.dto.UserDto;
 import com.raymundo.simplemsngr.dto.UserEditDto;
 import com.raymundo.simplemsngr.entity.JwtTokenEntity;
 import com.raymundo.simplemsngr.entity.UserEntity;
-import com.raymundo.simplemsngr.exception.AccountActivationException;
-import com.raymundo.simplemsngr.exception.EmailVerificationException;
-import com.raymundo.simplemsngr.exception.InvalidTokenException;
 import com.raymundo.simplemsngr.mapper.UserMapper;
 import com.raymundo.simplemsngr.repository.UserRepository;
 import com.raymundo.simplemsngr.service.AuthService;
@@ -15,6 +12,9 @@ import com.raymundo.simplemsngr.service.EmailService;
 import com.raymundo.simplemsngr.service.JwtService;
 import com.raymundo.simplemsngr.service.UserService;
 import com.raymundo.simplemsngr.util.EmailStatus;
+import com.raymundo.simplemsngr.util.exception.AccountActivationException;
+import com.raymundo.simplemsngr.util.exception.EmailVerificationException;
+import com.raymundo.simplemsngr.util.exception.InvalidTokenException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserDto editUser(UserEditDto userEditDto) {
+    public UserDto editUser(UserEditDto userEditDto) throws EmailVerificationException {
         UserEntity user = (UserEntity) holderStrategy.getContext().getAuthentication().getPrincipal();
 
         String name = (userEditDto.name() == null || userEditDto.name().isBlank()) ? user.getName() : userEditDto.name();
@@ -134,8 +134,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String sendVerificationEmail() {
+    public String sendVerificationEmail() throws EmailVerificationException {
         UserEntity user = (UserEntity) holderStrategy.getContext().getAuthentication().getPrincipal();
+
+        if (user.getEmailStatus().equals(EmailStatus.VERIFIED))
+            throw new EmailVerificationException("Email is already verified");
+
         emailService.sendAuthVerificationEmail();
         return user.getEmail();
     }

@@ -1,7 +1,7 @@
 package com.raymundo.simplemsngr.service;
 
 import com.raymundo.simplemsngr.dto.UserDto;
-import com.raymundo.simplemsngr.exception.FriendOperationException;
+import com.raymundo.simplemsngr.util.exception.FriendOperationException;
 
 import java.util.List;
 

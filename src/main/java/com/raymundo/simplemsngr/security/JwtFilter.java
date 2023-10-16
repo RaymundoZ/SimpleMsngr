@@ -1,9 +1,9 @@
 package com.raymundo.simplemsngr.security;
 
 import com.raymundo.simplemsngr.entity.JwtTokenEntity;
-import com.raymundo.simplemsngr.exception.InvalidTokenException;
 import com.raymundo.simplemsngr.service.JwtService;
 import com.raymundo.simplemsngr.util.AuthHelper;
+import com.raymundo.simplemsngr.util.exception.InvalidTokenException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,8 +29,8 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = authHelper.getJwtToken(request);
         if (token != null) {
-
             JwtTokenEntity jwtToken;
+
             try {
                 jwtToken = jwtService.parseToken(token);
             } catch (InvalidTokenException e) {

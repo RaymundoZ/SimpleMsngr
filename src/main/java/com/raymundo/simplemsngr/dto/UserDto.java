@@ -4,17 +4,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.raymundo.simplemsngr.util.EmailStatus;
-import com.raymundo.simplemsngr.validation.EmailUnique;
-import com.raymundo.simplemsngr.validation.UsernameUnique;
+import com.raymundo.simplemsngr.util.validation.EmailUnique;
+import com.raymundo.simplemsngr.util.validation.UsernameUnique;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 
-import java.util.UUID;
-
 public record UserDto(
-
-        @JsonProperty(value = "id", access = JsonProperty.Access.READ_ONLY)
-        UUID id,
 
         @NotEmpty(message = "The 'name' attribute should not be null")
         String name,

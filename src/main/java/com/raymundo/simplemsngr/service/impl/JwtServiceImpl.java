@@ -1,9 +1,9 @@
 package com.raymundo.simplemsngr.service.impl;
 
 import com.raymundo.simplemsngr.entity.JwtTokenEntity;
-import com.raymundo.simplemsngr.exception.InvalidTokenException;
 import com.raymundo.simplemsngr.repository.JwtTokenRepository;
 import com.raymundo.simplemsngr.service.JwtService;
+import com.raymundo.simplemsngr.util.exception.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

@@ -1,4 +1,4 @@
-package com.raymundo.simplemsngr.validation;
+package com.raymundo.simplemsngr.util.validation;
 
 import com.raymundo.simplemsngr.repository.UserRepository;
 import jakarta.validation.ConstraintValidator;

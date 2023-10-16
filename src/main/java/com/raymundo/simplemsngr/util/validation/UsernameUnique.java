@@ -1,4 +1,4 @@
-package com.raymundo.simplemsngr.validation;
+package com.raymundo.simplemsngr.util.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
