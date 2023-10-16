@@ -11,11 +11,18 @@ import com.raymundo.simplemsngr.util.AuthHelper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
 
+/**
+ * Default implementation of {@link AuthService}.
+ * Service that is responsible for authentication operations.
+ *
+ * @author RaymundoZ
+ */
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -26,6 +33,13 @@ public class AuthServiceImpl implements AuthService {
     private final UserMapper userMapper;
     private final SecurityContextHolderStrategy holderStrategy;
 
+    /**
+     * Gets current user from {@link SecurityContextHolderStrategy} and removes
+     * all his jwt tokens from database making it impossible to login again.
+     *
+     * @param request {@link HttpServletRequest}
+     * @return current user's username
+     */
     @Override
     @Transactional
     public String logout(HttpServletRequest request) {
@@ -35,6 +49,14 @@ public class AuthServiceImpl implements AuthService {
         return user.getUsername();
     }
 
+    /**
+     * Performs login by {@link AuthenticationManager}. Based on the received principal
+     * generates jwt token and saves to database.
+     *
+     * @param userLoginDto {@link UserLoginDto} that contains credentials
+     * @param request      {@link HttpServletRequest}
+     * @return {@link UserDto}
+     */
     @Override
     public UserDto login(UserLoginDto userLoginDto, HttpServletRequest request) {
         Authentication authentication = authHelper.authenticate(userLoginDto.username(),

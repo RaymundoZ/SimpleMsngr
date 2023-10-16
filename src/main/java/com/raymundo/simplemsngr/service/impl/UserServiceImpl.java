@@ -22,6 +22,12 @@ import org.springframework.security.core.context.SecurityContextHolderStrategy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+/**
+ * Default implementation of {@link UserService}.
+ * Service that is responsible for operations with users.
+ *
+ * @author RaymundoZ
+ */
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -34,6 +40,13 @@ public class UserServiceImpl implements UserService {
     private final SecurityContextHolderStrategy holderStrategy;
     private final AuthService authService;
 
+    /**
+     * Creates new user and saves it to database.
+     * Also creates jwt token based on that user.
+     *
+     * @param userDto {@link UserDto}
+     * @return {@link UserDto} user dto
+     */
     @Override
     public UserDto createUser(UserDto userDto) {
         UserEntity user = userMapper.toEntity(userDto);
@@ -52,6 +65,15 @@ public class UserServiceImpl implements UserService {
         return userMapper.toDto(userRepository.save(user));
     }
 
+    /**
+     * Edits user's non-credentials fields based on provided {@link UserEditDto}.
+     * If field in {@link UserEditDto} is not provided, it will not be changed.
+     * If email has changed, sends verification email.
+     *
+     * @param userEditDto {@link UserEditDto}
+     * @return {@link UserDto} userDto
+     * @throws EmailVerificationException exception during operations with email
+     */
     @Override
     @Transactional
     public UserDto editUser(UserEditDto userEditDto) throws EmailVerificationException {
@@ -77,6 +99,12 @@ public class UserServiceImpl implements UserService {
         return userMapper.toDto(user);
     }
 
+    /**
+     * Edits user's credentials based on provided {@link UserCredentialsDto}.
+     *
+     * @param userCredentialsDto {@link UserCredentialsDto}
+     * @return {@link UserDto} userDto
+     */
     @Override
     @Transactional
     public UserDto editCreds(UserCredentialsDto userCredentialsDto) {
@@ -98,6 +126,14 @@ public class UserServiceImpl implements UserService {
         return userMapper.toDto(user);
     }
 
+    /**
+     * Gets current user by {@link SecurityContextHolderStrategy} and invokes
+     * {@link UserEntity#setIsEnabled(Boolean isEnabled)} with false value.
+     * Makes this user impossible to login.
+     *
+     * @param request {@link HttpServletRequest}
+     * @return {@link String} user's email
+     */
     @Override
     @Transactional
     public String disableAccount(HttpServletRequest request) {
@@ -109,6 +145,16 @@ public class UserServiceImpl implements UserService {
         return user.getEmail();
     }
 
+    /**
+     * Gets current user by from provided jwt token and invokes
+     * {@link UserEntity#setIsEnabled(Boolean isEnabled)} with true value.
+     * Makes this user possible to login.
+     *
+     * @param token {@link String}
+     * @return {@link String} user's username
+     * @throws InvalidTokenException      exception during parsing token
+     * @throws AccountActivationException exception occurs if user not found
+     */
     @Override
     @Transactional
     public String enableAccount(String token) throws InvalidTokenException, AccountActivationException {
@@ -121,6 +167,16 @@ public class UserServiceImpl implements UserService {
         return user.getUsername();
     }
 
+    /**
+     * Verifies email by provided jwt token.
+     * Invokes {@link UserEntity#setEmailStatus(EmailStatus status)} with VERIFIED value
+     * if verification is successful.
+     *
+     * @param token {@link String}
+     * @return {@link String} verified email
+     * @throws EmailVerificationException exception occurs if user not found
+     * @throws InvalidTokenException      exception during parsing token
+     */
     @Override
     @Transactional
     public String verifyEmail(String token) throws EmailVerificationException, InvalidTokenException {
@@ -133,6 +189,13 @@ public class UserServiceImpl implements UserService {
         return email;
     }
 
+    /**
+     * Sends verification email for the current user
+     * if it is not verified yet.
+     *
+     * @return {@link String} email
+     * @throws EmailVerificationException exception occurs if user not found
+     */
     @Override
     public String sendVerificationEmail() throws EmailVerificationException {
         UserEntity user = (UserEntity) holderStrategy.getContext().getAuthentication().getPrincipal();

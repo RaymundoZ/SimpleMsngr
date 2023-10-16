@@ -20,6 +20,12 @@ import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Default implementation of {@link JwtService}.
+ * Service that is responsible for operations with jwt tokens.
+ *
+ * @author RaymundoZ
+ */
 @Service
 @RequiredArgsConstructor
 public class JwtServiceImpl implements JwtService {
@@ -29,6 +35,12 @@ public class JwtServiceImpl implements JwtService {
 
     private final JwtTokenRepository jwtTokenRepository;
 
+    /**
+     * Generates jwt token based on provided {@link JwtTokenEntity}.
+     *
+     * @param jwtToken {@link JwtTokenEntity}
+     * @return {@link String} jwt token
+     */
     @Override
     public String generateToken(JwtTokenEntity jwtToken) {
         UUID tokenId = jwtTokenRepository.save(jwtToken).getId();
@@ -45,17 +57,36 @@ public class JwtServiceImpl implements JwtService {
                 .compact();
     }
 
+    /**
+     * Removes jwt token from database.
+     * Makes impossible to use this token again.
+     *
+     * @param token {@link String} token to remove
+     * @throws InvalidTokenException exception during token handling
+     */
     @Override
     public void invalidateToken(String token) throws InvalidTokenException {
         JwtTokenEntity jwtToken = parseToken(token);
         jwtTokenRepository.delete(jwtToken);
     }
 
+    /**
+     * Removes jwt tokens from database by provided user username.
+     * Makes impossible to use these tokens again.
+     *
+     * @param username {@link String} username that is used for token removing
+     */
     @Override
     public void invalidateTokensByUsername(String username) {
         jwtTokenRepository.deleteAllByUsernameAndExpirationIsNull(username);
     }
 
+    /**
+     * Transforms provided token to {@link JwtTokenEntity}.
+     *
+     * @param token {@link String} token to transform
+     * @throws InvalidTokenException exception during token handling
+     */
     @Override
     public JwtTokenEntity parseToken(String token) throws InvalidTokenException {
         return jwtTokenRepository.findById(getId(token))

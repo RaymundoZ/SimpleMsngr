@@ -15,6 +15,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controller that is responsible for operations connected with user and his friend list.
+ *
+ * @author RaymundoZ
+ */
 @Tag(name = "FriendsController", description = "Responsible for operations connected with user and his friend list")
 @RestController
 @RequestMapping(value = "/friends")

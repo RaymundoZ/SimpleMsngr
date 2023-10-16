@@ -23,6 +23,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller that is responsible for operations with users.
+ *
+ * @author RaymundoZ
+ */
 @Tag(name = "UserController", description = "Responsible for operations connected with user and his profile")
 @RestController
 @RequestMapping(value = "/user")

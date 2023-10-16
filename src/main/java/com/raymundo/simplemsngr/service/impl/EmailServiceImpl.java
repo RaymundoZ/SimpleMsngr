@@ -13,6 +13,12 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+/**
+ * Default implementation of {@link EmailService}.
+ * Service that is responsible for email messages sending.
+ *
+ * @author RaymundoZ
+ */
 @Service
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
@@ -37,6 +43,11 @@ public class EmailServiceImpl implements EmailService {
     private final JwtService jwtService;
     private final SecurityContextHolderStrategy holderStrategy;
 
+    /**
+     * Gets current user from {@link SecurityContextHolderStrategy}.
+     * Based on the received principal generates jwt token and saves to database.
+     * Sends email message with verification link to the current user's email.
+     */
     @Override
     public void sendAuthVerificationEmail() {
         UserEntity user = (UserEntity) holderStrategy.getContext().getAuthentication().getPrincipal();
@@ -46,6 +57,11 @@ public class EmailServiceImpl implements EmailService {
         mailSender.send(message);
     }
 
+    /**
+     * Gets current user from {@link SecurityContextHolderStrategy}.
+     * Based on the received principal generates jwt token and saves to database.
+     * Sends email message with account restore link to the current user's email.
+     */
     @Override
     public void sendAccountDisableEmail() {
         UserEntity user = (UserEntity) holderStrategy.getContext().getAuthentication().getPrincipal();

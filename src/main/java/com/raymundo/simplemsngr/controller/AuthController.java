@@ -22,6 +22,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller that is responsible for authentication operations.
+ *
+ * @author RaymundoZ
+ */
 @Tag(name = "AuthController", description = "Responsible for security operations")
 @RestController
 @RequestMapping(value = "/auth")
