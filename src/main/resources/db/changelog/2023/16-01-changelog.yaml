@@ -1,0 +1,168 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1697436883990-1
+      author: username (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: _user_pkey
+                  name: id
+                  type: UUID
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+              - column:
+                  name: email_status
+                  type: VARCHAR(255)
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+              - column:
+                  name: surname
+                  type: VARCHAR(255)
+              - column:
+                  name: username
+                  type: VARCHAR(255)
+              - column:
+                  name: is_enabled
+                  type: BOOLEAN
+              - column:
+                  name: friends_visible
+                  type: BOOLEAN
+            tableName: _user
+  - changeSet:
+      id: 1697436883990-2
+      author: username (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: _friend_pkey
+                  name: id
+                  type: UUID
+              - column:
+                  name: friend_id
+                  type: UUID
+              - column:
+                  name: user_id
+                  type: UUID
+            tableName: _friend
+  - changeSet:
+      id: 1697436883990-3
+      author: username (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: _jwt_token_pkey
+                  name: id
+                  type: UUID
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+              - column:
+                  name: expiration
+                  type: TIMESTAMP WITHOUT TIME ZONE
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+              - column:
+                  name: username
+                  type: VARCHAR(255)
+            tableName: _jwt_token
+  - changeSet:
+      id: 1697436883990-4
+      author: username (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: _message_pkey
+                  name: id
+                  type: UUID
+              - column:
+                  name: message
+                  type: VARCHAR(255)
+              - column:
+                  name: timestamp
+                  type: TIMESTAMP WITHOUT TIME ZONE
+              - column:
+                  name: recipient_id
+                  type: UUID
+              - column:
+                  name: sender_id
+                  type: UUID
+            tableName: _message
+  - changeSet:
+      id: 1697436883990-5
+      author: username (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: friend_id
+            baseTableName: _friend
+            constraintName: fkmyxlnw6mrdwfjtcooyk7itjyp
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+            referencedColumnNames: id
+            referencedTableName: _user
+  - changeSet:
+      id: 1697436883990-6
+      author: username (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: recipient_id
+            baseTableName: _message
+            constraintName: fknmrarbrvyd9yafkmm7iitkknh
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+            referencedColumnNames: id
+            referencedTableName: _user
+  - changeSet:
+      id: 1697436883990-7
+      author: username (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: _friend
+            constraintName: fkogw08fdfdr1srhq2pb554ukj2
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+            referencedColumnNames: id
+            referencedTableName: _user
+  - changeSet:
+      id: 1697436883990-8
+      author: username (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: sender_id
+            baseTableName: _message
+            constraintName: fkwafqtrjo4sy1b9t9ca0wxcrl
+            onDelete: NO ACTION
+            onUpdate: NO ACTION
+            referencedColumnNames: id
+            referencedTableName: _user
+
